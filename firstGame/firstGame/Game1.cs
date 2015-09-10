@@ -18,6 +18,8 @@ namespace firstGame
         Texture2D idleTexture;
         Texture2D enemyTexture;
         Texture2D friezaHurtTexture;
+        Texture2D background;
+
 
         KeyboardState newState;
 
@@ -28,6 +30,8 @@ namespace firstGame
         List<Bullet> bullets = new List<Bullet>();
         Bullet bullet;
 
+        Rectangle mainFrame;
+
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -35,6 +39,7 @@ namespace firstGame
 
             graphics.PreferredBackBufferWidth = 800;
             graphics.PreferredBackBufferHeight = 600;
+            
         }
 
         protected override void Initialize()
@@ -57,6 +62,7 @@ namespace firstGame
             idleTexture = Content.Load<Texture2D>("pictures/GokuSSJ/gokuIdle");
             enemyTexture = Content.Load<Texture2D>("pictures/Frieza/FriezaIdle");
             friezaHurtTexture = Content.Load<Texture2D>("pictures/Frieza/FriezaHurt1");
+            background = Content.Load<Texture2D>("pictures/Background/Arena");
             bullet = new Bullet();
         }
 
@@ -145,8 +151,12 @@ namespace firstGame
             {
                 System.Console.WriteLine("Hit");
                 enemyTexture = friezaHurtTexture;
+                
             }
-
+            
+            //Background
+            spriteBatch.Draw(background, mainFrame, Color.White);
+            mainFrame = new Rectangle(0, 0, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
 
             //player
             spriteBatch.Draw(playerTexture, spritePosition, Color.White);

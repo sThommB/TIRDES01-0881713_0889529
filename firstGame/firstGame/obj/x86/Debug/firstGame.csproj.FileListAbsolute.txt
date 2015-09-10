@@ -75,3 +75,4 @@ C:\Users\Thom\Desktop\TIRDES01-0881713_0889529\firstGame\firstGame\bin\Windows\D
 C:\Users\Thom\Desktop\TIRDES01-0881713_0889529\firstGame\firstGame\bin\Windows\Debug\Content\Pictures\Frieza\FriezaAttack3.png
 C:\Users\Thom\Desktop\TIRDES01-0881713_0889529\firstGame\firstGame\bin\Windows\Debug\Content\Pictures\Frieza\FriezaHurt1.png
 C:\Users\Thom\Desktop\TIRDES01-0881713_0889529\firstGame\firstGame\bin\Windows\Debug\Content\Pictures\Frieza\FriezaIdle.png
+C:\Users\Thom\Desktop\TIRDES01-0881713_0889529\firstGame\firstGame\bin\Windows\Debug\Content\Pictures\Background\Arena.png
