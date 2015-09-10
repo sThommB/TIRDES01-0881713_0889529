@@ -34,3 +34,39 @@ C:\Users\JLuijk\documents\visual studio 2015\Projects\firstGame\firstGame\bin\Wi
 C:\Users\JLuijk\documents\visual studio 2015\Projects\firstGame\firstGame\bin\Windows\Debug\Content\Pictures\gokuSSJ\gokuPunch2.png
 C:\Users\JLuijk\documents\visual studio 2015\Projects\firstGame\firstGame\bin\Windows\Debug\Content\Pictures\gokuSSJ\gokuRight.png
 C:\Users\JLuijk\documents\visual studio 2015\Projects\firstGame\firstGame\bin\Windows\Debug\Content\Pictures\blast.png
+C:\Users\Thom\Desktop\TIRDES01-0881713_0889529\firstGame\firstGame\obj\x86\Debug\firstGame.exe
+C:\Users\Thom\Desktop\TIRDES01-0881713_0889529\firstGame\firstGame\obj\x86\Debug\firstGame.pdb
+C:\Users\Thom\Desktop\TIRDES01-0881713_0889529\firstGame\firstGame\bin\Windows\Debug\Content\Pictures\blast.png
+C:\Users\Thom\Desktop\TIRDES01-0881713_0889529\firstGame\firstGame\bin\Windows\Debug\Content\Pictures\gokuSSJ\gokuDashRL.png
+C:\Users\Thom\Desktop\TIRDES01-0881713_0889529\firstGame\firstGame\bin\Windows\Debug\Content\Pictures\gokuSSJ\gokuDashUD.png
+C:\Users\Thom\Desktop\TIRDES01-0881713_0889529\firstGame\firstGame\bin\Windows\Debug\Content\Pictures\gokuSSJ\gokuFire.png
+C:\Users\Thom\Desktop\TIRDES01-0881713_0889529\firstGame\firstGame\bin\Windows\Debug\Content\Pictures\gokuSSJ\gokuIdle.png
+C:\Users\Thom\Desktop\TIRDES01-0881713_0889529\firstGame\firstGame\bin\Windows\Debug\Content\Pictures\gokuSSJ\gokukamePrepare.png
+C:\Users\Thom\Desktop\TIRDES01-0881713_0889529\firstGame\firstGame\bin\Windows\Debug\Content\Pictures\gokuSSJ\gokuLeft.png
+C:\Users\Thom\Desktop\TIRDES01-0881713_0889529\firstGame\firstGame\bin\Windows\Debug\Content\Pictures\gokuSSJ\gokuPunch1.png
+C:\Users\Thom\Desktop\TIRDES01-0881713_0889529\firstGame\firstGame\bin\Windows\Debug\Content\Pictures\gokuSSJ\gokuPunch2.png
+C:\Users\Thom\Desktop\TIRDES01-0881713_0889529\firstGame\firstGame\bin\Windows\Debug\Content\Pictures\gokuSSJ\gokuRight.png
+C:\Users\Thom\Desktop\TIRDES01-0881713_0889529\firstGame\firstGame\bin\Windows\Debug\Content\Pictures\gokuSSJ\gokuUpDown.png
+C:\Users\Thom\Desktop\TIRDES01-0881713_0889529\firstGame\firstGame\bin\Windows\Debug\firstGame.exe
+C:\Users\Thom\Desktop\TIRDES01-0881713_0889529\firstGame\firstGame\bin\Windows\Debug\firstGame.pdb
+C:\Users\Thom\Desktop\TIRDES01-0881713_0889529\firstGame\firstGame\bin\Windows\Debug\MonoGame.Framework.dll
+C:\Users\Thom\Desktop\TIRDES01-0881713_0889529\firstGame\firstGame\bin\Windows\Debug\SharpDX.MediaFoundation.dll
+C:\Users\Thom\Desktop\TIRDES01-0881713_0889529\firstGame\firstGame\bin\Windows\Debug\SharpDX.dll
+C:\Users\Thom\Desktop\TIRDES01-0881713_0889529\firstGame\firstGame\bin\Windows\Debug\SharpDX.XAudio2.dll
+C:\Users\Thom\Desktop\TIRDES01-0881713_0889529\firstGame\firstGame\bin\Windows\Debug\SharpDX.Direct3D11.dll
+C:\Users\Thom\Desktop\TIRDES01-0881713_0889529\firstGame\firstGame\bin\Windows\Debug\SharpDX.DXGI.dll
+C:\Users\Thom\Desktop\TIRDES01-0881713_0889529\firstGame\firstGame\bin\Windows\Debug\SharpDX.Direct2D1.dll
+C:\Users\Thom\Desktop\TIRDES01-0881713_0889529\firstGame\firstGame\bin\Windows\Debug\SharpDX.XInput.dll
+C:\Users\Thom\Desktop\TIRDES01-0881713_0889529\firstGame\firstGame\bin\Windows\Debug\SharpDX.RawInput.dll
+C:\Users\Thom\Desktop\TIRDES01-0881713_0889529\firstGame\firstGame\bin\Windows\Debug\SharpDX.Direct3D9.dll
+C:\Users\Thom\Desktop\TIRDES01-0881713_0889529\firstGame\firstGame\bin\Windows\Debug\MonoGame.Framework.xml
+C:\Users\Thom\Desktop\TIRDES01-0881713_0889529\firstGame\firstGame\bin\Windows\Debug\SharpDX.MediaFoundation.xml
+C:\Users\Thom\Desktop\TIRDES01-0881713_0889529\firstGame\firstGame\bin\Windows\Debug\SharpDX.xml
+C:\Users\Thom\Desktop\TIRDES01-0881713_0889529\firstGame\firstGame\bin\Windows\Debug\SharpDX.XAudio2.xml
+C:\Users\Thom\Desktop\TIRDES01-0881713_0889529\firstGame\firstGame\bin\Windows\Debug\SharpDX.Direct3D11.xml
+C:\Users\Thom\Desktop\TIRDES01-0881713_0889529\firstGame\firstGame\bin\Windows\Debug\SharpDX.DXGI.xml
+C:\Users\Thom\Desktop\TIRDES01-0881713_0889529\firstGame\firstGame\bin\Windows\Debug\SharpDX.Direct2D1.xml
+C:\Users\Thom\Desktop\TIRDES01-0881713_0889529\firstGame\firstGame\bin\Windows\Debug\SharpDX.XInput.xml
+C:\Users\Thom\Desktop\TIRDES01-0881713_0889529\firstGame\firstGame\bin\Windows\Debug\SharpDX.RawInput.xml
+C:\Users\Thom\Desktop\TIRDES01-0881713_0889529\firstGame\firstGame\bin\Windows\Debug\SharpDX.Direct3D9.xml
+C:\Users\Thom\Desktop\TIRDES01-0881713_0889529\firstGame\firstGame\obj\x86\Debug\firstGame.csprojResolveAssemblyReference.cache

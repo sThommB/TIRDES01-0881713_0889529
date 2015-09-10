@@ -16,11 +16,13 @@ namespace firstGame
         Texture2D downMoveTexture;
         Texture2D upMoveTexture;
         Texture2D idleTexture;
+        Texture2D enemyTexture;
 
         KeyboardState newState;
 
         Player player = new Player(0, 0);
         Vector2 spritePosition;
+        Vector2 spritePositionEnemy;
 
         List<Bullet> bullets = new List<Bullet>();
         Bullet bullet;
@@ -30,8 +32,8 @@ namespace firstGame
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
 
-            //graphics.PreferredBackBufferWidth = 1920;
-            //graphics.PreferredBackBufferHeight = 1080;
+            graphics.PreferredBackBufferWidth = 800;
+            graphics.PreferredBackBufferHeight = 600;
         }
 
         protected override void Initialize()
@@ -52,6 +54,7 @@ namespace firstGame
             downMoveTexture = Content.Load<Texture2D>("pictures/GokuSSJ/gokuUpDown");
             upMoveTexture = Content.Load<Texture2D>("pictures/GokuSSJ/gokuUpDown");
             idleTexture = Content.Load<Texture2D>("pictures/GokuSSJ/gokuIdle");
+            enemyTexture = Content.Load<Texture2D>("pictures/GokuSSJ/gokuIdle");
             bullet = new Bullet();
         }
 
@@ -110,11 +113,42 @@ namespace firstGame
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
             spritePosition = new Vector2(player.getX, player.getY);//player position
+            spritePositionEnemy = new Vector2(300, 300);
+
+            //prevents border leaving  'border control'
+            if (player.getX < 0)
+            {
+                player.getX = 0;//left border control
+            }
+
+            if (player.getX + playerTexture.Width > 800)
+            {
+                player.getX = 800 - playerTexture.Width;//right border control
+            }
+
+            if (player.getY < 0)
+            {
+                player.getY = 0;//up border control
+            }
+
+            if (player.getY + playerTexture.Height > 600)
+            {
+                player.getY = 600 - playerTexture.Height;//down border control
+            }
 
             spriteBatch.Begin();
 
+            //hittest if player touches enemy
+            if (((player.getX + playerTexture.Width) >= 300 && player.getX <= (300 + enemyTexture.Width)) && ((player.getY + enemyTexture.Height) >= 300 && player.getY <= (300 + enemyTexture.Height)))
+            {
+                System.Console.WriteLine("Hit");
+                enemyTexture = downMoveTexture;
+            }
+
+
             //player
             spriteBatch.Draw(playerTexture, spritePosition, Color.White);
+            spriteBatch.Draw(enemyTexture, spritePositionEnemy, Color.White);
            
             //bullets
             foreach (Bullet bullet in bullets)//check every bullet
