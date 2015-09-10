@@ -19,11 +19,12 @@ namespace firstGame
         Texture2D enemyTexture;
         Texture2D friezaHurtTexture;
         Texture2D background;
+        Texture2D fireTexture;
 
 
         KeyboardState newState;
 
-        Player player = new Player(0, 0);
+        Player player = new Player(50, 500);
         Vector2 spritePosition;
         Vector2 spritePositionEnemy;
 
@@ -63,6 +64,7 @@ namespace firstGame
             enemyTexture = Content.Load<Texture2D>("pictures/Frieza/FriezaIdle");
             friezaHurtTexture = Content.Load<Texture2D>("pictures/Frieza/FriezaHurt1");
             background = Content.Load<Texture2D>("pictures/Background/Arena");
+            fireTexture = Content.Load<Texture2D>("pictures/GokuSSJ/gokuFire");
             bullet = new Bullet();
         }
 
@@ -105,6 +107,7 @@ namespace firstGame
             //attack
             if (newState.IsKeyDown(Keys.Z) )
             {
+                playerTexture = fireTexture; // Fire
                 bullet = new Bullet();
                 bullet.activateBullet(spritePosition, attackTexture, 25, 15);
                 bullets.Add(bullet);
@@ -121,7 +124,7 @@ namespace firstGame
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
             spritePosition = new Vector2(player.getX, player.getY);//player position
-            spritePositionEnemy = new Vector2(300, 300);
+            spritePositionEnemy = new Vector2(710, 500);
 
             //prevents border leaving  'border control'
             if (player.getX < 0)
@@ -147,7 +150,7 @@ namespace firstGame
             spriteBatch.Begin();
 
             //hittest if player touches enemy
-            if (((player.getX + playerTexture.Width) >= 300 && player.getX <= (300 + enemyTexture.Width)) && ((player.getY + enemyTexture.Height) >= 300 && player.getY <= (300 + enemyTexture.Height)))
+            if (((player.getX + playerTexture.Width) >= 710 && player.getX <= (710 + enemyTexture.Width)) && ((player.getY + enemyTexture.Height) >= 500 && player.getY <= (500 + enemyTexture.Height)))
             {
                 System.Console.WriteLine("Hit");
                 enemyTexture = friezaHurtTexture;
