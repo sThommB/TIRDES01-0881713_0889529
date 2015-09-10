@@ -70,3 +70,8 @@ C:\Users\Thom\Desktop\TIRDES01-0881713_0889529\firstGame\firstGame\bin\Windows\D
 C:\Users\Thom\Desktop\TIRDES01-0881713_0889529\firstGame\firstGame\bin\Windows\Debug\SharpDX.RawInput.xml
 C:\Users\Thom\Desktop\TIRDES01-0881713_0889529\firstGame\firstGame\bin\Windows\Debug\SharpDX.Direct3D9.xml
 C:\Users\Thom\Desktop\TIRDES01-0881713_0889529\firstGame\firstGame\obj\x86\Debug\firstGame.csprojResolveAssemblyReference.cache
+C:\Users\Thom\Desktop\TIRDES01-0881713_0889529\firstGame\firstGame\bin\Windows\Debug\Content\Pictures\Frieza\FriezaAttack1.png
+C:\Users\Thom\Desktop\TIRDES01-0881713_0889529\firstGame\firstGame\bin\Windows\Debug\Content\Pictures\Frieza\FriezaAttack2.png
+C:\Users\Thom\Desktop\TIRDES01-0881713_0889529\firstGame\firstGame\bin\Windows\Debug\Content\Pictures\Frieza\FriezaAttack3.png
+C:\Users\Thom\Desktop\TIRDES01-0881713_0889529\firstGame\firstGame\bin\Windows\Debug\Content\Pictures\Frieza\FriezaHurt1.png
+C:\Users\Thom\Desktop\TIRDES01-0881713_0889529\firstGame\firstGame\bin\Windows\Debug\Content\Pictures\Frieza\FriezaIdle.png

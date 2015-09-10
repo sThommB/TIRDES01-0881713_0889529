@@ -17,6 +17,7 @@ namespace firstGame
         Texture2D upMoveTexture;
         Texture2D idleTexture;
         Texture2D enemyTexture;
+        Texture2D friezaHurtTexture;
 
         KeyboardState newState;
 
@@ -54,7 +55,8 @@ namespace firstGame
             downMoveTexture = Content.Load<Texture2D>("pictures/GokuSSJ/gokuUpDown");
             upMoveTexture = Content.Load<Texture2D>("pictures/GokuSSJ/gokuUpDown");
             idleTexture = Content.Load<Texture2D>("pictures/GokuSSJ/gokuIdle");
-            enemyTexture = Content.Load<Texture2D>("pictures/GokuSSJ/gokuIdle");
+            enemyTexture = Content.Load<Texture2D>("pictures/Frieza/FriezaIdle");
+            friezaHurtTexture = Content.Load<Texture2D>("pictures/Frieza/FriezaHurt1");
             bullet = new Bullet();
         }
 
@@ -142,7 +144,7 @@ namespace firstGame
             if (((player.getX + playerTexture.Width) >= 300 && player.getX <= (300 + enemyTexture.Width)) && ((player.getY + enemyTexture.Height) >= 300 && player.getY <= (300 + enemyTexture.Height)))
             {
                 System.Console.WriteLine("Hit");
-                enemyTexture = downMoveTexture;
+                enemyTexture = friezaHurtTexture;
             }
 
 
