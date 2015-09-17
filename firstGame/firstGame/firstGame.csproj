@@ -38,6 +38,7 @@
     <ApplicationIcon>Icon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Asteroid.cs" />
     <Compile Include="Bullet.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="Game1.cs" />
@@ -52,6 +53,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\Pictures\Asteroid.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\Pictures\Asteroids.png" />
     <Content Include="Content\Pictures\Background\Arena.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

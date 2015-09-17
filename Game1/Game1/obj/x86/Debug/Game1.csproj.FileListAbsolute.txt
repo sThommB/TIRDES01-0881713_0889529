@@ -24,3 +24,5 @@ c:\users\thom\documents\visual studio 2013\Projects\Game1\Game1\bin\Windows\Debu
 c:\users\thom\documents\visual studio 2013\Projects\Game1\Game1\bin\Windows\Debug\SharpDX.Direct3D9.xml
 c:\users\thom\documents\visual studio 2013\Projects\Game1\Game1\obj\x86\Debug\Game1.exe
 c:\users\thom\documents\visual studio 2013\Projects\Game1\Game1\obj\x86\Debug\Game1.pdb
+C:\Users\JLuijk\Desktop\TIRDES01-0881713_0889529\Game1\Game1\obj\x86\Debug\Game1.exe
+C:\Users\JLuijk\Desktop\TIRDES01-0881713_0889529\Game1\Game1\obj\x86\Debug\Game1.pdb
