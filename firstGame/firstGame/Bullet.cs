@@ -13,7 +13,6 @@ namespace firstGame
         public Texture2D bulletTexture;
         public Vector2 bulletPosition;
         public bool IsActive = false;
-        //int speed = 2;
 
         public Bullet()
         {

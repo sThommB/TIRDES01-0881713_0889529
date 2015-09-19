@@ -9,7 +9,6 @@ namespace firstGame
     {
         private int x = 0;
         private int y = 0;
-        private int speed = 4;
 
         public Player(int x, int y)
         {
