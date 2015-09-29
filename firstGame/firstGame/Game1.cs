@@ -7,36 +7,180 @@ using System.Linq;
 
 namespace firstGame
 {
+    struct Entity //for asteroids and plasma objects
+    {
+        public Entity(Vector2 p, Texture2D a)
+        {
+            Position = p;
+            Appearance = a;
+        }
+
+        public Vector2 Position { get; private set; }
+        public Texture2D Appearance { get; private set; }
+
+        public float X { get { return Position.X; } }
+        public float Y { get { return Position.Y; } }
+
+        public Entity CreateMoved(Vector2 deltaPosition)
+        {
+            return new Entity()
+            {
+                Position = this.Position + deltaPosition,
+                Appearance = this.Appearance
+            };
+        }
+    }
+    interface InputController
+    {
+        bool Quit { get; }
+        Vector2 PlayerMovement { get; }
+        bool Shooting { get; }
+
+        void Update(float dt);
+    }
+
+    class KeyboardController : InputController
+    {
+        KeyboardState ks;
+
+        public bool Quit
+        {
+            get
+            {
+                return ks.IsKeyDown(Keys.Escape);
+            }
+        }
+
+        public Vector2 PlayerMovement
+        {
+            get
+            {
+                var PlayerMovement = Vector2.Zero;
+                if (ks.IsKeyDown(Keys.A))//left
+                    PlayerMovement.X -= 1.0f;
+                if (ks.IsKeyDown(Keys.D))//right
+                    PlayerMovement.X += 1.0f;
+                if (ks.IsKeyDown(Keys.W))//up
+                    PlayerMovement.Y -= 1.0f;
+                if (ks.IsKeyDown(Keys.S))//down
+                    PlayerMovement.Y += 1.0f;
+                return PlayerMovement;
+            }
+        }
+
+        public bool Shooting
+        {
+            get
+            {
+                return ks.IsKeyDown(Keys.Space);
+            }
+        }
+
+        public void Update(float dt)
+        {
+            ks = Keyboard.GetState();
+        }
+    }
+
+    class MouseController : InputController
+    {
+        MouseState ms;
+
+        public bool Quit
+        {
+            get
+            {
+                return false;
+            }
+        }
+
+        public Vector2 PlayerMovement
+        {
+            get
+            {
+                return new Vector2(ms.X - 400, ms.Y - 300) * 0.01f;
+            }
+        }
+
+        public bool Shooting
+        {
+            get
+            {
+                return ms.LeftButton == ButtonState.Pressed;
+            }
+        }
+
+        public void Update(float dt)
+        {
+            ms = Mouse.GetState();
+        }
+    }
+
+    class ControllerSum : InputController
+    {
+        InputController first, second;
+        public ControllerSum(InputController a, InputController b)
+        {
+            first = a;
+            second = b;
+        }
+
+        public bool Quit
+        {
+            get
+            {
+                return first.Quit || second.Quit;
+            }
+        }
+
+        public Vector2 PlayerMovement
+        {
+            get
+            {
+                return first.PlayerMovement + second.PlayerMovement;
+            }
+        }
+
+        public bool Shooting
+        {
+            get
+            {
+                return first.Shooting || second.Shooting;
+            }
+        }
+
+        public void Update(float dt)
+        {
+            first.Update(dt);
+            second.Update(dt);
+        }
+    }
     public class Game1 : Game
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
-        Texture2D playerTexture, attackTexture, rightMoveTexture, leftMoveTexture, downMoveTexture, upMoveTexture, idleTexture;//player
+        Texture2D attackTexture, rightMoveTexture, leftMoveTexture, downMoveTexture, upMoveTexture, idleTexture;//player
         Texture2D enemyTexture, friezaHurtTexture, background;//enemy
         Texture2D asteroidTexture;//asteroid
         Texture2D fireTexture;//plasma
 
         Rectangle mainFrame;//background
 
-        KeyboardState newState;
-
-        Player player = new Player(50, 500);
-        Vector2 spritePosition, spritePositionEnemy, plasmaPosition;
-
-        List<Bullet> bullets = new List<Bullet>();//bullets
-        Bullet bullet;
-        List<Asteroid> asteroids = new List<Asteroid>();//asteroids
-        Asteroid asteroid;
-
-        List<Vector2> asteroidPositions = new List<Vector2>();
-        List<Vector2> plasmaPositions = new List<Vector2>();
-
         Random randomGenerator = new Random();
+        List<Entity> asteroids = new List<Entity>();
+        List<Entity> plasmas = new List<Entity>();
+        Entity player;
+        float playerSpeed;
 
         int gameLogicScriptPC = 0;
         int rndNumberLine1, iLine1;
         float timeToWaitLine3, timeToWaitLine4, timeToWaitLine8, timeToWaitLine7;
         int rndNumberLine5, iLine5;
+
+        InputController input =
+         new ControllerSum(
+           new KeyboardController(),
+             new MouseController());
 
         public Game1()
         {
@@ -59,7 +203,6 @@ namespace firstGame
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);            // Create a new SpriteBatch, which can be used to draw textures.
 
-            // TODO: use this.Content to load your game content here
             //player
             attackTexture = Content.Load<Texture2D>("pictures/blast");
             rightMoveTexture = Content.Load<Texture2D>("pictures/GokuSSJ/gokuRight");
@@ -76,8 +219,9 @@ namespace firstGame
             //asteroid
             asteroidTexture = Content.Load<Texture2D>("pictures/Asteroid");
 
-            bullet = new Bullet();
-            asteroid = new Asteroid();
+            player = new Entity(new Vector2(300.0f, 400.0f),
+              Content.Load<Texture2D>("pictures/GokuSSJ/gokuIdle"));
+            playerSpeed = 100.0f;
         }
 
         protected override void UnloadContent()
@@ -90,77 +234,43 @@ namespace firstGame
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            newState = Keyboard.GetState();//read keyboard
             float deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
+            input.Update(deltaTime);
+            if (input.Quit)
+                Exit();
+            
+            var newPlasmas =
+              (from plasma in plasmas
+               let colliders =
+                  from asteroid in asteroids
+                  where Vector2.Distance(plasma.Position, asteroid.Position) < 20.0f
+                  select asteroid
+               where plasma.X > 0.0f &&
+                     plasma.X < 800.0f &&
+                     plasma.Y > 0.0f &&
+                     plasma.Y < 800.0f &&
+                     colliders.Count() == 0
+               select plasma.CreateMoved(-Vector2.UnitX * -200.0f * deltaTime)).ToList();
+                if (input.Shooting)
+                    newPlasmas.Add(
+                      new Entity(player.Position,
+                        attackTexture));
 
-            var newPlasmaPositions =
-                (from plasmaPosition in plasmaPositions
+            var newAsteroids =
+                (from asteroid in asteroids
                 let colliders =
-                    from asteroidPosition in asteroidPositions
-                    where Vector2.Distance(plasmaPosition, asteroidPosition) < 20.0f
-                
-                select asteroidPosition
-                where plasmaPosition.X > 0.0f &&
-                    plasmaPosition.X < 800.0f &&
-                    plasmaPosition.Y > 0.0f &&
-                    plasmaPosition.Y < 600.0f &&
-                    colliders.Count() == 0
-
-                select plasmaPosition + Vector2.UnitX * 200.0f * deltaTime).ToList();
-            if (newState.IsKeyDown(Keys.Space))
-            {
-                plasmaPosition = spritePosition;
-                plasmaPosition.X += 25;
-                plasmaPosition.Y += 15;
-                newPlasmaPositions.Add(plasmaPosition);
-            }
-
-            var newAsteroidPositions =
-                (from asteroidPosition in asteroidPositions
-                let colliders =
-                    from plasmaPosition in plasmaPositions
-                    where Vector2.Distance(plasmaPosition, asteroidPosition) < 20.0f
-                    select plasmaPosition
-                where asteroidPosition.X > 0.0f &&
-                        asteroidPosition.X < 800.0f &&
-                        asteroidPosition.Y > 0.0f &&
-                        asteroidPosition.Y < 600.0f &&
+                    from plasma in plasmas
+                    where Vector2.Distance(plasma.Position, asteroid.Position) < 20.0f
+                    select plasma
+                where asteroid.X > 0.0f &&
+                        asteroid.X < 800.0f &&
+                        asteroid.Y > 0.0f &&
+                        asteroid.Y < 600.0f &&
                         colliders.Count() == 0
-                select asteroidPosition - Vector2.UnitX * 100.0f * deltaTime).ToList();
+                select asteroid.CreateMoved(Vector2.UnitX * -100.0f * deltaTime)).ToList();
 
-            //movement - right, left, down, up.
-            if (newState.IsKeyDown(Keys.Right) || newState.IsKeyDown(Keys.D))
-            {
-                player.getX += player.getSpeed;
-                playerTexture = rightMoveTexture;//right
-            }
-            else if (newState.IsKeyDown(Keys.Left) || newState.IsKeyDown(Keys.A))
-            {
-                player.getX += (player.getSpeed * -1);
-                playerTexture = leftMoveTexture;//left
-            }
-            else if (newState.IsKeyDown(Keys.Down) || newState.IsKeyDown(Keys.S))
-            {
-                player.getY += player.getSpeed;
-                playerTexture = downMoveTexture;//down
-            }
-            else if (newState.IsKeyDown(Keys.Up) || newState.IsKeyDown(Keys.W))
-            {
-                player.getY += (player.getSpeed * -1);
-                playerTexture = upMoveTexture;//up
-            }
-            else {
-                playerTexture = idleTexture;//idle
-            }
-
-            //attack
-            if (newState.IsKeyDown(Keys.Z) )
-            {
-                playerTexture = fireTexture; // Fire
-                bullet = new Bullet();
-                bullet.activateBullet(spritePosition, attackTexture, 25, 15);
-                bullets.Add(bullet);
-            }
+            Vector2 playerVelocity = input.PlayerMovement * playerSpeed;
+            var newplayer = player.CreateMoved(playerVelocity * deltaTime); 
 
             switch (gameLogicScriptPC)
             {
@@ -184,11 +294,11 @@ namespace firstGame
                     }
                     break;
                 case 2://create asteroid
-                    newAsteroidPositions.Add(new Vector2(600.0f, (float)(randomGenerator.NextDouble() * 800.0)));
-
-                    /* asteroid = new Asteroid();
-                     asteroid.activateAsteroid(new Vector2(800.0f, (float)(randomGenerator.NextDouble() * 600.0)));
-                     asteroids.Add(asteroid);*/
+                    newAsteroids.Add(
+                     new Entity(new Vector2(600.0f, (float)(randomGenerator.NextDouble() * 800.0)),
+                       asteroidTexture));
+                    gameLogicScriptPC = 3;
+                    timeToWaitLine3 = (float)(randomGenerator.NextDouble() * 0.2 + 0.1);
 
                     gameLogicScriptPC = 3;
                     timeToWaitLine3 = (float)(randomGenerator.NextDouble() * 0.2 + 0.1);
@@ -226,11 +336,9 @@ namespace firstGame
                     }
                     break;
                 case 6://create asteroid
-                    newAsteroidPositions.Add(new Vector2(600.0f, (float)(randomGenerator.NextDouble() * 800.0)));
-
-                    /*asteroid = new Asteroid();
-                    asteroid.activateAsteroid(new Vector2(800.0f, (float)(randomGenerator.NextDouble() * 600.0)));
-                    asteroids.Add(asteroid);*/
+                    newAsteroids.Add(
+                      new Entity(new Vector2(600.0f, (float)(randomGenerator.NextDouble() * 800.0)),
+                        asteroidTexture));
 
                     gameLogicScriptPC = 7;
                     timeToWaitLine7 = (float)(randomGenerator.NextDouble() * 1.5 + 0.5);
@@ -258,15 +366,9 @@ namespace firstGame
                     break;
             }
 
-            // COMMIT CHANGES TO THE STATE
-            plasmaPositions = newPlasmaPositions;
-            asteroidPositions = newAsteroidPositions;
-
-            bullet.updateBullets(bullets, 5, 0);//bullet movement
-            bullet.deactivateBullet(bullets, graphics.PreferredBackBufferHeight);//delete off-screen bullets
-
-            asteroid.updateAsteroid(asteroids, 5, 0);//bullet movement
-            asteroid.deactivateAsteroid(asteroids, graphics.PreferredBackBufferHeight);//delete off-screen bullets
+            plasmas = newPlasmas;
+            asteroids = newAsteroids;
+            player = newplayer;
 
             base.Update(gameTime);
         }
@@ -275,11 +377,8 @@ namespace firstGame
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
-            spritePosition = new Vector2(player.getX, player.getY);//player position
-            spritePositionEnemy = new Vector2(710, 500);
-
             //prevents border leaving  'border control'
-            if (player.getX < 0)
+           /* if (player.getX < 0)
             {
                 player.getX = 0;//left border control
             }
@@ -297,64 +396,22 @@ namespace firstGame
             if (player.getY + playerTexture.Height > 600)
             {
                 player.getY = 600 - playerTexture.Height;//down border control
-            }
+            }*/
 
             spriteBatch.Begin();
-
-            //hittest if player touches enemy
-            if (((player.getX + playerTexture.Width) >= 710 && player.getX <= (710 + enemyTexture.Width)) && ((player.getY + enemyTexture.Height) >= 500 && player.getY <= (500 + enemyTexture.Height)))
-            {
-                System.Console.WriteLine("Hit");
-                enemyTexture = friezaHurtTexture;
-                
-            }
 
             //Background
             spriteBatch.Draw(background, mainFrame, Color.White);
             mainFrame = new Rectangle(0, 0, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
 
-            //player
-            spriteBatch.Draw(playerTexture, spritePosition, Color.White);
-            spriteBatch.Draw(enemyTexture, spritePositionEnemy, Color.White);
-           
-            //bullets
-            foreach (Bullet bullet in bullets)//check every bullet
+            spriteBatch.Draw(player.Appearance, player.Position, Color.White);
+            foreach (var plasma in plasmas)
             {
-                if (bullet.IsActive == true)//only draw active bullets
-                {
-                    spriteBatch.Draw(bullet.bulletTexture, bullet.bulletPosition, Color.White);
-                }
-                //hittest if bullet hits asteroid
-                /*foreach (Asteroid asteroid in asteroids)//check every asteroid
-                {
-                    if (((bullet.bulletPosition.X + bullet.bulletTexture.Width) >= 710 && bullet.bulletPosition.X <= (710 + asteroidTexture.Width)) && ((bullet.bulletPosition.Y + asteroidTexture.Height) >= 500 && bullet.bulletPosition.Y <= (500 + asteroidTexture.Height)))
-                    {
-                        System.Console.WriteLine("Hit");
-                        enemyTexture = friezaHurtTexture;
-                    }
-                    if (asteroid.IsActive == true)//only draw active asteroid
-                    {
-                        spriteBatch.Draw(asteroidTexture, asteroid.asteroidPosition, Color.White);
-                    }
-                }*/               
+                spriteBatch.Draw(plasma.Appearance, plasma.Position, Color.White);
             }
-
-           /* foreach (Asteroid asteroid in asteroids)//check every asteroid
+            foreach (var asteroid in asteroids)
             {
-                if (asteroid.IsActive == true)//only draw active asteroid
-                {
-                    spriteBatch.Draw(asteroidTexture, asteroid.asteroidPosition, Color.White);
-                }
-            }*/
-            //plasma
-            foreach (var plasmaPosition in plasmaPositions)
-            {
-                spriteBatch.Draw(attackTexture, plasmaPosition, Color.White);
-            }
-            //asteroid
-            foreach (var asteroidPosition in asteroidPositions)
-            {
-                spriteBatch.Draw(asteroidTexture, asteroidPosition, Color.White);
+                spriteBatch.Draw(asteroid.Appearance, asteroid.Position, Color.White);
             }
 
             spriteBatch.End();
