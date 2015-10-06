@@ -7,154 +7,6 @@ using System.Linq;
 
 namespace firstGame
 {
-    struct Entity //for asteroids and plasma objects
-    {
-        public Entity(Vector2 p, Texture2D a)
-        {
-            Position = p;
-            Appearance = a;
-        }
-
-        public Vector2 Position { get; private set; }
-        public Texture2D Appearance { get; private set; }
-
-        public float X { get { return Position.X; } }
-        public float Y { get { return Position.Y; } }
-
-        public Entity CreateMoved(Vector2 deltaPosition)
-        {
-            return new Entity()
-            {
-                Position = this.Position + deltaPosition,
-                Appearance = this.Appearance
-            };
-        }
-    }
-    interface InputController
-    {
-        bool Quit { get; }
-        Vector2 PlayerMovement { get; }
-        bool Shooting { get; }
-
-        void Update(float dt);
-    }
-
-    class KeyboardController : InputController
-    {
-        KeyboardState ks;
-
-        public bool Quit
-        {
-            get
-            {
-                return ks.IsKeyDown(Keys.Escape);
-            }
-        }
-
-        public Vector2 PlayerMovement
-        {
-            get
-            {
-                var PlayerMovement = Vector2.Zero;
-                if (ks.IsKeyDown(Keys.A))//left
-                    PlayerMovement.X -= 1.0f;
-                if (ks.IsKeyDown(Keys.D))//right
-                    PlayerMovement.X += 1.0f;
-                if (ks.IsKeyDown(Keys.W))//up
-                    PlayerMovement.Y -= 1.0f;
-                if (ks.IsKeyDown(Keys.S))//down
-                    PlayerMovement.Y += 1.0f;
-                return PlayerMovement;
-            }
-        }
-
-        public bool Shooting
-        {
-            get
-            {
-                return ks.IsKeyDown(Keys.Space);
-            }
-        }
-
-        public void Update(float dt)
-        {
-            ks = Keyboard.GetState();
-        }
-    }
-
-    class MouseController : InputController
-    {
-        MouseState ms;
-
-        public bool Quit
-        {
-            get
-            {
-                return false;
-            }
-        }
-
-        public Vector2 PlayerMovement
-        {
-            get
-            {
-                return new Vector2(ms.X - 400, ms.Y - 300) * 0.01f;
-            }
-        }
-
-        public bool Shooting
-        {
-            get
-            {
-                return ms.LeftButton == ButtonState.Pressed;
-            }
-        }
-
-        public void Update(float dt)
-        {
-            ms = Mouse.GetState();
-        }
-    }
-
-    class ControllerSum : InputController
-    {
-        InputController first, second;
-        public ControllerSum(InputController a, InputController b)
-        {
-            first = a;
-            second = b;
-        }
-
-        public bool Quit
-        {
-            get
-            {
-                return first.Quit || second.Quit;
-            }
-        }
-
-        public Vector2 PlayerMovement
-        {
-            get
-            {
-                return first.PlayerMovement + second.PlayerMovement;
-            }
-        }
-
-        public bool Shooting
-        {
-            get
-            {
-                return first.Shooting || second.Shooting;
-            }
-        }
-
-        public void Update(float dt)
-        {
-            first.Update(dt);
-            second.Update(dt);
-        }
-    }
     public class Game1 : Game
     {
         GraphicsDeviceManager graphics;
@@ -162,7 +14,7 @@ namespace firstGame
         Texture2D attackTexture, rightMoveTexture, leftMoveTexture, downMoveTexture, upMoveTexture, idleTexture;//player
         Texture2D enemyTexture, friezaHurtTexture, background;//enemy
         Texture2D asteroidTexture;//asteroid
-        Texture2D fireTexture;//plasma
+        Texture2D fireTexture, fire3Texture;//plasma
 
         Rectangle mainFrame;//background
 
@@ -177,16 +29,19 @@ namespace firstGame
         float timeToWaitLine3, timeToWaitLine4, timeToWaitLine8, timeToWaitLine7;
         int rndNumberLine5, iLine5;
 
-        InputController input =
-         new ControllerSum(
-           new KeyboardController(),
-             new MouseController());
+        //Controllers
+        InputController input = new KeyboardController();   //keyboard only
+        //InputController input = new ControllerSum(new KeyboardController(), new MouseController());   //both mouse and keyboard
+
+        //player weapon
+        Weapon<Entity> currentWeapon;
 
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
 
+            //screen size
             graphics.PreferredBackBufferWidth = 800;
             graphics.PreferredBackBufferHeight = 600;
             
@@ -194,8 +49,6 @@ namespace firstGame
 
         protected override void Initialize()
         {
-            // TODO: Add your initialization logic here
-
             base.Initialize();
         }
 
@@ -204,7 +57,7 @@ namespace firstGame
             spriteBatch = new SpriteBatch(GraphicsDevice);            // Create a new SpriteBatch, which can be used to draw textures.
 
             //player
-            attackTexture = Content.Load<Texture2D>("pictures/blast");
+            attackTexture = Content.Load<Texture2D>("pictures/GokuSSJ/gokuFire");
             rightMoveTexture = Content.Load<Texture2D>("pictures/GokuSSJ/gokuRight");
             leftMoveTexture = Content.Load<Texture2D>("pictures/GokuSSJ/gokuLeft");
             downMoveTexture = Content.Load<Texture2D>("pictures/GokuSSJ/gokuUpDown");
@@ -215,18 +68,20 @@ namespace firstGame
             friezaHurtTexture = Content.Load<Texture2D>("pictures/Frieza/FriezaHurt1");
             background = Content.Load<Texture2D>("pictures/Background/Arena");
             //plasma
-            fireTexture = Content.Load<Texture2D>("pictures/GokuSSJ/gokuFire");
+            fireTexture = Content.Load<Texture2D>("pictures/blast");
+            fire3Texture = Content.Load<Texture2D>("pictures/blast3");
             //asteroid
             asteroidTexture = Content.Load<Texture2D>("pictures/Asteroid");
 
             player = new Entity(new Vector2(300.0f, 400.0f),
               Content.Load<Texture2D>("pictures/GokuSSJ/gokuIdle"));
-            playerSpeed = 100.0f;
+            playerSpeed = 200.0f;
+            currentWeapon = new Blaster(Content);
+           // currentWeapon = new BigBlaster(Content);
         }
 
         protected override void UnloadContent()
         {
-            // TODO: Unload any non ContentManager content here
         }
 
         protected override void Update(GameTime gameTime)
@@ -243,18 +98,18 @@ namespace firstGame
               (from plasma in plasmas
                let colliders =
                   from asteroid in asteroids
-                  where Vector2.Distance(plasma.Position, asteroid.Position) < 20.0f
+                  where Vector2.Distance(plasma.Position, asteroid.Position) < 20.0f //hittest, does asteroid hit plasma?
                   select asteroid
-               where plasma.X > 0.0f &&
+               where plasma.X > 0.0f &&         //only on-screen plasma
                      plasma.X < 800.0f &&
                      plasma.Y > 0.0f &&
                      plasma.Y < 800.0f &&
                      colliders.Count() == 0
-               select plasma.CreateMoved(-Vector2.UnitX * -200.0f * deltaTime)).ToList();
-                if (input.Shooting)
-                    newPlasmas.Add(
-                      new Entity(player.Position,
-                        attackTexture));
+               select plasma.CreateMoved(Vector2.UnitX * 200.0f * deltaTime)).ToList();//move plasma to right
+            currentWeapon.Update(deltaTime, player.Position);
+            if (input.Shooting)     //if 'shooting' key down, create more plasma
+                currentWeapon.PullTrigger();
+            newPlasmas.AddRange(currentWeapon.NewBullets);//add 'barrel' list to regular plasma list
 
             var newAsteroids =
                 (from asteroid in asteroids
@@ -366,8 +221,8 @@ namespace firstGame
                     break;
             }
 
-            plasmas = newPlasmas;
-            asteroids = newAsteroids;
+            plasmas = newPlasmas;       //throws away old* plasma.
+            asteroids = newAsteroids;   //throws away old* asteroids.   *out of bounds or hit asteroid/plasma object
             player = newplayer;
 
             base.Update(gameTime);
@@ -376,27 +231,6 @@ namespace firstGame
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
-
-            //prevents border leaving  'border control'
-           /* if (player.getX < 0)
-            {
-                player.getX = 0;//left border control
-            }
-
-            if (player.getX + playerTexture.Width > 800)
-            {
-                player.getX = 800 - playerTexture.Width;//right border control
-            }
-
-            if (player.getY < 0)
-            {
-                player.getY = 0;//up border control
-            }
-
-            if (player.getY + playerTexture.Height > 600)
-            {
-                player.getY = 600 - playerTexture.Height;//down border control
-            }*/
 
             spriteBatch.Begin();
 
@@ -421,7 +255,7 @@ namespace firstGame
     }
 }
 
-
+//debug
 // System.Console.WriteLine("thing in here");
 //System.Diagnostics.Debug.WriteLine("dfsdf");
 // view->output

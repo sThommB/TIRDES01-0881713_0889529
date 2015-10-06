@@ -119,3 +119,4 @@ C:\Users\JLuijk\Desktop\TIRDES01-0881713_0889529\firstGame\firstGame\bin\Windows
 C:\Users\JLuijk\Desktop\TIRDES01-0881713_0889529\firstGame\firstGame\bin\Windows\Debug\SharpDX.Direct3D9.xml
 C:\Users\JLuijk\Desktop\TIRDES01-0881713_0889529\firstGame\firstGame\obj\x86\Debug\firstGame.csprojResolveAssemblyReference.cache
 C:\Users\JLuijk\Desktop\TIRDES01-0881713_0889529\firstGame\firstGame\bin\Windows\Debug\Content\Pictures\Asteroid.png
+C:\Users\JLuijk\Desktop\TIRDES01-0881713_0889529\firstGame\firstGame\bin\Windows\Debug\Content\Pictures\blast3.png
