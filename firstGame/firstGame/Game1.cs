@@ -76,8 +76,8 @@ namespace firstGame
             player = new Entity(new Vector2(300.0f, 400.0f),
               Content.Load<Texture2D>("pictures/GokuSSJ/gokuIdle"));
             playerSpeed = 200.0f;
-            currentWeapon = new Blaster(Content);
-           // currentWeapon = new BigBlaster(Content);
+            //currentWeapon = new Blaster(Content);
+            currentWeapon = new BigBlaster(Content);
         }
 
         protected override void UnloadContent()

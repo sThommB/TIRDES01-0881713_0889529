@@ -121,6 +121,7 @@ C:\Users\JLuijk\Desktop\TIRDES01-0881713_0889529\firstGame\firstGame\obj\x86\Deb
 C:\Users\JLuijk\Desktop\TIRDES01-0881713_0889529\firstGame\firstGame\bin\Windows\Debug\Content\Pictures\Asteroid.png
 C:\Users\JLuijk\Desktop\TIRDES01-0881713_0889529\firstGame\firstGame\bin\Windows\Debug\Content\Pictures\blast3.png
 Y:\thomb\Documents\GitHub\TIRDES01-0881713_0889529\firstGame\firstGame\obj\x86\Debug\firstGame.exe
+Y:\thomb\Documents\GitHub\TIRDES01-0881713_0889529\firstGame\firstGame\obj\x86\Debug\firstGame.pdb
 Y:\thomb\Documents\GitHub\TIRDES01-0881713_0889529\firstGame\firstGame\bin\Windows\Debug\Content\Pictures\Background\Arena.png
 Y:\thomb\Documents\GitHub\TIRDES01-0881713_0889529\firstGame\firstGame\bin\Windows\Debug\Content\Pictures\blast.png
 Y:\thomb\Documents\GitHub\TIRDES01-0881713_0889529\firstGame\firstGame\bin\Windows\Debug\Content\Pictures\blast3.png
