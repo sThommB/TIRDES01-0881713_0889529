@@ -4,9 +4,18 @@ using Microsoft.Xna.Framework.Input;
 using System.Collections.Generic;
 using System;
 using System.Linq;
+using firstGame.Scripts;
 
 namespace firstGame
 {
+    enum InstructionResult
+    {
+        Done,
+        DoneAndCreateAsteroid,
+        Running,
+        RunningAndCreateAsteroid
+    }
+
     public class Game1 : Game
     {
         GraphicsDeviceManager graphics;
@@ -18,16 +27,22 @@ namespace firstGame
 
         Rectangle mainFrame;//background
 
-        Random randomGenerator = new Random();
+        static Random randomGenerator = new Random();
         List<Entity> asteroids = new List<Entity>();
         List<Entity> plasmas = new List<Entity>();
         Entity player;
         float playerSpeed;
 
-        int gameLogicScriptPC = 0;
-        int rndNumberLine1, iLine1;
-        float timeToWaitLine3, timeToWaitLine4, timeToWaitLine8, timeToWaitLine7;
-        int rndNumberLine5, iLine5;
+        Instruction gameLogic =
+            new Repeat(
+                new For(0, 10, i =>
+                      new Wait(() => i * 0.1f) +
+                      new CreateAsteroid()) +
+                new Wait(() => randomGenerator.Next(1, 5)) +
+                new For(0, 10, i =>
+                      new Wait(() => (float)randomGenerator.NextDouble() * 1.0f + 0.2f) +
+                      new CreateAsteroid()) +
+                new Wait(() => randomGenerator.Next(2, 3)));
 
         //Controllers
         InputController input = new KeyboardController();   //keyboard only
@@ -89,7 +104,7 @@ namespace firstGame
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            float deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
+            float deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;//time since last update
             input.Update(deltaTime);
             if (input.Quit)
                 Exit();
@@ -125,102 +140,22 @@ namespace firstGame
                 select asteroid.CreateMoved(Vector2.UnitX * -100.0f * deltaTime)).ToList();
 
             Vector2 playerVelocity = input.PlayerMovement * playerSpeed;
-            var newplayer = player.CreateMoved(playerVelocity * deltaTime); 
+            var newplayer = player.CreateMoved(playerVelocity * deltaTime);
 
-            switch (gameLogicScriptPC)
+            switch (gameLogic.Execute(deltaTime))
             {
-                case 0://always true
-                    if (true)
-                    {
-                        gameLogicScriptPC = 1;
-                        iLine1 = 1;
-                        rndNumberLine1 = randomGenerator.Next(20, 60);
-                    }
-                    else
-                        gameLogicScriptPC = 9;
-                    break;
-                case 1://'for loop'
-                    if (iLine1 <= rndNumberLine1)
-                        gameLogicScriptPC = 2;
-                    else
-                    {
-                        gameLogicScriptPC = 4;//nxt loop
-                        timeToWaitLine4 = (float)(randomGenerator.NextDouble() * 2.0 + 5.0);
-                    }
-                    break;
-                case 2://create asteroid
-                    newAsteroids.Add(
-                     new Entity(new Vector2(600.0f, (float)(randomGenerator.NextDouble() * 800.0)),
-                       asteroidTexture));
-                    gameLogicScriptPC = 3;
-                    timeToWaitLine3 = (float)(randomGenerator.NextDouble() * 0.2 + 0.1);
-
-                    gameLogicScriptPC = 3;
-                    timeToWaitLine3 = (float)(randomGenerator.NextDouble() * 0.2 + 0.1);
-                    break;
-                case 3://wait per asteroid
-                    timeToWaitLine3 -= deltaTime;
-                    if (timeToWaitLine3 > 0.0f)
-                        gameLogicScriptPC = 3;
-                    else
-                    {
-                        gameLogicScriptPC = 1;
-                        iLine1++;
-                    }
-                    break;
-                case 4://wait nxt loop
-                    timeToWaitLine4 -= deltaTime;
-                    if (timeToWaitLine4 > 0.0f)
-                        gameLogicScriptPC = 4;
-                    else
-                    {
-                        gameLogicScriptPC = 5;
-                        iLine5 = 1;
-                        rndNumberLine5 = randomGenerator.Next(10, 20);
-                    }
-                    break;
-                case 5://'for loop'
-                    if (iLine5 <= rndNumberLine5)
-                    {
-                        gameLogicScriptPC = 6;
-                    }
-                    else
-                    {
-                        gameLogicScriptPC = 8;
-                        timeToWaitLine8 = (float)(randomGenerator.NextDouble() * 2.0 + 5.0);
-                    }
-                    break;
-                case 6://create asteroid
+                case InstructionResult.DoneAndCreateAsteroid:
                     newAsteroids.Add(
                       new Entity(new Vector2(600.0f, (float)(randomGenerator.NextDouble() * 800.0)),
                         asteroidTexture));
-
-                    gameLogicScriptPC = 7;
-                    timeToWaitLine7 = (float)(randomGenerator.NextDouble() * 1.5 + 0.5);
                     break;
-                case 7://wait for asteroid
-                    timeToWaitLine7 -= deltaTime;
-                    if (timeToWaitLine7 > 0)
-                        gameLogicScriptPC = 7;
-                    else
-                    {
-                        gameLogicScriptPC = 5;
-                        iLine5++;
-                    }
-                    break;
-                case 8://wait and go to 0
-                    timeToWaitLine8 -= deltaTime;
-                    if (timeToWaitLine8 > 0.0f)
-                        gameLogicScriptPC = 8;
-                    else
-                    {
-                        gameLogicScriptPC = 0;
-                    }
-                    break;
-                default:
+                case InstructionResult.RunningAndCreateAsteroid:
+                    newAsteroids.Add(
+                      new Entity(new Vector2(600.0f, (float)(randomGenerator.NextDouble() * 800.0)),
+                        asteroidTexture));
                     break;
             }
-
+          
             plasmas = newPlasmas;       //throws away old* plasma.
             asteroids = newAsteroids;   //throws away old* asteroids.   *out of bounds or hit asteroid/plasma object
             player = newplayer;
@@ -255,7 +190,7 @@ namespace firstGame
     }
 }
 
-//debug
+//for debug
 // System.Console.WriteLine("thing in here");
 //System.Diagnostics.Debug.WriteLine("dfsdf");
 // view->output

@@ -33,24 +33,26 @@ namespace firstGame
 
         protected List<Entity> barrel = new List<Entity>();
         float charge = 100;
-        float timeSinceLastShot = float.PositiveInfinity;
+        float timeSinceLastShot = float.PositiveInfinity;//posinfinte is a number bigger than 3.402823e38
         public void PullTrigger()
         {
+            //conditional statement
             if (charge >= 2 && timeSinceLastShot >= 0.2f)
             {
-                //place for conditional statements
-                charge -= 10;
-                timeSinceLastShot = 0.0f;
-                AddShots();
+                charge -= 10;//shooting takes energy
+                timeSinceLastShot = 0.0f;//we're gonna shoot now
+                AddShots();//shooting
+                //System.Console.WriteLine(charge);//for debug, view->output
             }
         }
         protected abstract void AddShots();
         protected Vector2 playerPosition;
         public void Update(float dt, Vector2 playerPosition)
         {
-            charge += dt * 10.0f; //recharge time
-            timeSinceLastShot += dt;
+            charge += dt * 10.0f;//one second = +10.0f charge
+            timeSinceLastShot += dt;//add time since last update
             charge = MathHelper.Clamp(charge, 0, 100); //giving it a range form 0-100
+
             this.playerPosition = playerPosition;//for placing bullet near player
             barrel = new List<Entity>();//overwrites the old list, for removing old barrel plasma?
         }
